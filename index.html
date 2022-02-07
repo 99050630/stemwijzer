@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stemwijzer 2022 | Jordan Bel | 99050630</title>
+    <!-- Scritpts -->
+    <script src="http://stemwijzer.dvc-icta.nl/testdata.js"></script>
+    <!-- Links -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div id="stemwijzer">
+        <div class="stemwijzer_container" id="startScreen">
+            <div class="stemwijzer_content">
+                <img src="https://tweedekamer2021.stemwijzer.nl/gfx/img/votematch_applogo.svg" alt="">
+                <div class="stemwijzer_home_text">
+                    <h2>Tweede Kamer­verkiezingen 2021</h2>
+                    <p>Test je politieke voorkeur aan de hand van 30 stellingen</p>
+                </div>
+                <button type="button" id="start_btn" class="start_btn">Start</button>
+            </div>
+        </div>
+        <div class="stemwijzer_vragen_container" id="questionScreen">
+            <div class="vragen_header">
+                <div class="arrow" id="reverse_btn"><i class="fas fa-arrow-left"></i></div>
+            </div>
+            <div class="vragen_content">
+                <div id="title" class="vragen_title">Titel: </div>
+                <div id="statement" class="vragen_statement">Statement: </div>
+                <div class="vragen_btn_container">
+                    <button type="button" id="eens_btn" class="vragen_btn">Eens</button>
+                    <button type="button" id="neutraal_btn" class="vragen_btn">Geen van beide</button>
+                    <button type="button" id="oneens_btn" class="vragen_btn">Oneens</button>
+                    <button type="button" id="skip" class="skip">Sla deze vraag over <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="resultaat_container" id="resultScreen">
+            <div id="title_result" class="title_result">Dit is uw partij: </div>
+            <div id="statement_result" class="statement_result">Statement: </div>
+            <div id="partij_size_result" class="partij_size_result">1</div>
+        </div>
+    </div>
+    <script src="script/script.js"></script>
+</body>
+</html>
