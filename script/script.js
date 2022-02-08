@@ -152,6 +152,8 @@ function loadQuestionInfo(id){
 }
 
 function setPartiesArgument(){
+    partieStatementContainer.innerHTML = "";
+    partieNameContainer.innerHTML = "";
     for(let i = 0; i < subjects[questionCount].parties.length; i++){
         var partijName = subjects[questionCount].parties[i].name.replace(" ", "_");
         partieStatementContainer.innerHTML += "<div class='partie_question_container' id='"+partijName+"_statement'>"+subjects[questionCount].parties[i].opinion+"</div>";
@@ -178,21 +180,23 @@ function getQuestion(){
 }
 
 function getReverseQuestion(){
-    var question = [];
-    var questionCheck = subjects.length;
-    questionCount--;
-    questionCount--;
-    matchCounterCounter--;
-    if(questionCheck != questionCount){
-        question['title'] = subjects[questionCount].title;
-        question['statement'] = subjects[questionCount].statement;
-        questionCount++;
-    }else{
-        question['title'] = "";
-        question['statement'] = ""
+    if(questionCount == 0){
+        var question = [];
+        var questionCheck = subjects.length;
+        questionCount--;
+        questionCount--;
+        matchCounterCounter--;
+        if(questionCheck != questionCount){
+            question['title'] = subjects[questionCount].title;
+            question['statement'] = subjects[questionCount].statement;
+            questionCount++;
+        }else{
+            question['title'] = "";
+            question['statement'] = ""
+        }
+        // questionCount++;
+        return question;
     }
-    // questionCount++;
-    return question;
 }
 
 function loadResult(){
@@ -261,17 +265,19 @@ function loadQuestions(){
 }
 
 function reverseQuestion(){
-    startScreen.style.display = "none";
-    questionScreen.style.display = "flex";
-    var reverseQuestion = getReverseQuestion();
-    // console.log(reverseQuestion);
-    if(reverseQuestion['title'] != "" && reverseQuestion['statement'] != ""){
-        title.innerHTML = reverseQuestion['title'];
-        statement.innerHTML = reverseQuestion['statement'];
-        resetButtons();
-        oldAnswerCheck();
-    }else{
-        loadResult();
+    if(questionCount == 0){
+        startScreen.style.display = "none";
+        questionScreen.style.display = "flex";
+        var reverseQuestion = getReverseQuestion();
+        // console.log(reverseQuestion);
+        if(reverseQuestion['title'] != "" && reverseQuestion['statement'] != ""){
+            title.innerHTML = reverseQuestion['title'];
+            statement.innerHTML = reverseQuestion['statement'];
+            resetButtons();
+            oldAnswerCheck();
+        }else{
+            loadResult();
+        }
     }
 }
 
