@@ -67,7 +67,6 @@ function setResultCounter(type){
     var partijIndex = 0;
     for(var i = 0; i < parties.length; i++){
         if(type == "big"){
-            console.log("in Big");
             if(parties[i].size > sizeDiff){
                 partij[partijIndex] = {
                     partijNaam: parties[i].name,
@@ -76,7 +75,6 @@ function setResultCounter(type){
                 partijIndex++;
             }
         }else if(type == "small"){
-            console.log("in small");
             if(parties[i].size < sizeDiff){
                 partij[partijIndex] = {
                     partijNaam: parties[i].name,
@@ -101,11 +99,9 @@ function setResultCounter(type){
         }
     }
 
-    console.log(partij);
     for(var i = 0; i < subjects.length; i++){
         for(var j = 0; j < partij.length; j++){
             if(subjects[i].parties[j].position == matchCounter[i]){
-                console.log(subjects[i].parties[j].position);
                 partij[j].partijCounter++;
             }
         }
@@ -126,18 +122,10 @@ function setResultCounter(type){
             }
         }
     }
-    // console.log(partij);
-    // console.log(gekozenPartij);
-    // console.log(oldBestResult);
-    
-    console.log("in voor loop");
-    console.log(oldBestResult.length);
+
     for(var i = 0; i < oldBestResult.length; i++){
-        // console.log("in voor loop");
         return_arr[0][i] = gekozenPartij[i];
         return_arr[1][i] = oldBestResult[i];
-        // console.log(return_arr[0] + "return_arr[0]");
-        // console.log(return_arr[1] + "return_arr[0]");
     }
     return return_arr;
 }
@@ -214,12 +202,9 @@ function loadResult(){
     }else{
         typeLoad = "all";
     }
-    console.log(btnID);
     var result = setResultCounter(typeLoad);
     questionScreen.style.display = "none";
     resultScreen.style.display = "flex";
-    console.log(result);
-    console.log("result");
     for(var j = 0; j < result[0].length; j++){
         for(var i = 0; i < parties.length; i++){
             if(parties[i].name == result[0][j]){
@@ -232,8 +217,6 @@ function loadResult(){
 }
 
 function oldAnswerCheck(){
-    console.log(matchCounter);
-    console.log(matchCounterCounter);
     // matchCounterCounter--;
     if(matchCounter[matchCounterCounter] != ""){
         if(matchCounter[matchCounterCounter] == "pro"){
@@ -253,7 +236,6 @@ function loadQuestions(){
     startScreen.style.display = "none";
     questionScreen.style.display = "flex";
     var question = getQuestion();
-    // console.log(question);
     if(question['title'] != "" && question['statement'] != ""){
         title.innerHTML = question['title'];
         statement.innerHTML = question['statement'];
@@ -269,7 +251,6 @@ function reverseQuestion(){
         startScreen.style.display = "none";
         questionScreen.style.display = "flex";
         var reverseQuestion = getReverseQuestion();
-        // console.log(reverseQuestion);
         if(reverseQuestion['title'] != "" && reverseQuestion['statement'] != ""){
             title.innerHTML = reverseQuestion['title'];
             statement.innerHTML = reverseQuestion['statement'];
