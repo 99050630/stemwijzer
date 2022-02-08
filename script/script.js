@@ -1,25 +1,35 @@
 //Declerations;
 var questionCount = 0;
-var startBtn = document.getElementById("start_btn");
+//Declerations: screens
 var startScreen = document.getElementById("startScreen");
 var questionScreen = document.getElementById("questionScreen");
 var resultScreen = document.getElementById("resultScreen");
-
+//Declerations: buttons
+var startBtn = document.getElementById("start_btn");
 var eensBtn = document.getElementById("eens_btn");
 var neutraalBtn = document.getElementById("neutraal_btn");
 var oneensBtn = document.getElementById("oneens_btn");
 var skipBtn = document.getElementById("skip");
 var reverseBtn = document.getElementById("reverse_btn");
-
+var bigParties = document.getElementById("bigParties");
+var smallParties = document.getElementById("smallParties");
+var bigParties = document.getElementById("bigParties");
+var seculaireParties = document.getElementById("seculaireParties");
+//Declerations: vragen pagina
 var title = document.getElementById("title");
 var statement = document.getElementById("statement");
-
+var vragenPartijen = document.getElementById("vragen_partijen");
+var partieNameContainer = document.getElementById("partie_name_container");
+var partieStatementContainer = document.getElementById("partie_statement_container");
+//Declerations: result pagina
 var titleResult = document.getElementById("title_result");
 var statementResult = document.getElementById("statement_result");
 var sizeResult = document.getElementById("partij_size_result");
 
 var matchCounter = [];
 var matchCounterCounter = 0;
+
+const sizeDiff = 10;
 
 //Event listeners;
 startBtn.addEventListener("click", loadQuestions);
@@ -28,6 +38,10 @@ neutraalBtn.addEventListener("click", setMatch);
 oneensBtn.addEventListener("click", setMatch);
 skipBtn.addEventListener("click", setMatch);
 reverseBtn.addEventListener("click", reverseQuestion);
+bigParties.addEventListener("click", loadResult);
+smallParties.addEventListener("click", loadResult);
+seculaireParties.addEventListener("click", loadResult);
+allParties.addEventListener("click", loadResult);
 
 //Functions
 function setMatch(){
@@ -43,23 +57,55 @@ function setMatch(){
     loadQuestions();
 }
 
-function setResultCounter(){
+function setResultCounter(type){
     var partij = [];
     var return_arr = [];
     return_arr[0] = [];
     return_arr[1] = [];
     var gekozenPartij = [];
     var oldBestResult = [];
+    var partijIndex = 0;
     for(var i = 0; i < parties.length; i++){
-        partij[i] = {
-            partijNaam: parties[i].name,
-            partijCounter: 0
-        };
+        if(type == "big"){
+            console.log("in Big");
+            if(parties[i].size > sizeDiff){
+                partij[partijIndex] = {
+                    partijNaam: parties[i].name,
+                    partijCounter: 0
+                };
+                partijIndex++;
+            }
+        }else if(type == "small"){
+            console.log("in small");
+            if(parties[i].size < sizeDiff){
+                partij[partijIndex] = {
+                    partijNaam: parties[i].name,
+                    partijCounter: 0
+                };
+                partijIndex++;
+            }
+        }else if(type == "seculaire"){
+            if(parties[i].secular == true){
+                partij[partijIndex] = {
+                    partijNaam: parties[i].name,
+                    partijCounter: 0
+                };
+                partijIndex++;
+            }
+        }else{
+            partij[partijIndex] = {
+                partijNaam: parties[i].name,
+                partijCounter: 0
+            };
+            partijIndex++;
+        }
     }
 
+    console.log(partij);
     for(var i = 0; i < subjects.length; i++){
-        for(var j = 0; j < subjects[i].parties.length; j++){
+        for(var j = 0; j < partij.length; j++){
             if(subjects[i].parties[j].position == matchCounter[i]){
+                console.log(subjects[i].parties[j].position);
                 partij[j].partijCounter++;
             }
         }
@@ -81,19 +127,39 @@ function setResultCounter(){
         }
     }
     // console.log(partij);
-    console.log(gekozenPartij);
-    console.log(oldBestResult);
+    // console.log(gekozenPartij);
+    // console.log(oldBestResult);
     
     console.log("in voor loop");
     console.log(oldBestResult.length);
     for(var i = 0; i < oldBestResult.length; i++){
-        console.log("in voor loop");
+        // console.log("in voor loop");
         return_arr[0][i] = gekozenPartij[i];
         return_arr[1][i] = oldBestResult[i];
-        console.log(return_arr[0] + "return_arr[0]");
-        console.log(return_arr[1] + "return_arr[0]");
+        // console.log(return_arr[0] + "return_arr[0]");
+        // console.log(return_arr[1] + "return_arr[0]");
     }
     return return_arr;
+}
+
+function loadQuestionInfo(id){
+    var showID = id;
+    var allOpinion = document.querySelectorAll('.partie_question_container');
+    for(var i = 0; i < allOpinion.length; i++){
+        allOpinion[i].style.display = "none";
+    }
+    document.getElementById(showID+"_statement").style.display = "flex";
+}
+
+function setPartiesArgument(){
+    for(let i = 0; i < subjects[questionCount].parties.length; i++){
+        var partijName = subjects[questionCount].parties[i].name.replace(" ", "_");
+        partieStatementContainer.innerHTML += "<div class='partie_question_container' id='"+partijName+"_statement'>"+subjects[questionCount].parties[i].opinion+"</div>";
+        partieNameContainer.innerHTML += "<div class='partie_name' onclick=\"loadQuestionInfo('"+partijName+"');\" id='"+partijName+"'>"+subjects[questionCount].parties[i].name+"</div>";
+        // (function(index){
+        //     document.getElementById(subjects[questionCount].parties[index].name).addEventListener("click", loadQuestionInfo);
+        // })(i)
+    }
 }
 
 function getQuestion(){
@@ -102,6 +168,7 @@ function getQuestion(){
     if(questionCheck != questionCount){
         question['title'] = subjects[questionCount].title;
         question['statement'] = subjects[questionCount].statement;
+        setPartiesArgument();
         questionCount++;
     }else{
         question['title'] = "";
@@ -129,7 +196,22 @@ function getReverseQuestion(){
 }
 
 function loadResult(){
-    var result = setResultCounter();
+    titleResult.innerHTML = "";
+    statementResult.innerHTML = "";
+    sizeResult.innerHTML = "";
+    var btnID = this.id;
+    var typeLoad;
+    if(btnID == "bigParties"){
+        typeLoad = "big";
+    }else if(btnID == "smallParties"){
+        typeLoad = "small";
+    }else if(btnID == "seculaireParties"){
+        typeLoad = "seculaire";
+    }else{
+        typeLoad = "all";
+    }
+    console.log(btnID);
+    var result = setResultCounter(typeLoad);
     questionScreen.style.display = "none";
     resultScreen.style.display = "flex";
     console.log(result);
@@ -167,7 +249,7 @@ function loadQuestions(){
     startScreen.style.display = "none";
     questionScreen.style.display = "flex";
     var question = getQuestion();
-    console.log(question);
+    // console.log(question);
     if(question['title'] != "" && question['statement'] != ""){
         title.innerHTML = question['title'];
         statement.innerHTML = question['statement'];
@@ -182,7 +264,7 @@ function reverseQuestion(){
     startScreen.style.display = "none";
     questionScreen.style.display = "flex";
     var reverseQuestion = getReverseQuestion();
-    console.log(reverseQuestion);
+    // console.log(reverseQuestion);
     if(reverseQuestion['title'] != "" && reverseQuestion['statement'] != ""){
         title.innerHTML = reverseQuestion['title'];
         statement.innerHTML = reverseQuestion['statement'];
