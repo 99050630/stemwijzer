@@ -25,6 +25,7 @@ var partieStatementContainer = document.getElementById("partie_statement_contain
 var titleResult = document.getElementById("title_result");
 var statementResult = document.getElementById("statement_result");
 var sizeResult = document.getElementById("partij_size_result");
+var resultaatPartijInfoContainer = document.getElementById("resultaat_partij_info_container");
 
 var matchCounter = [];
 var matchCounterCounter = 0;
@@ -58,13 +59,12 @@ function setMatch(){
 }
 
 function setResultCounter(type){
+    console.log(matchCounter);
     var partij = [];
+    var partijIndex = 0;
     var return_arr = [];
     return_arr[0] = [];
     return_arr[1] = [];
-    var gekozenPartij = [];
-    var oldBestResult = [];
-    var partijIndex = 0;
     for(var i = 0; i < parties.length; i++){
         if(type == "big"){
             if(parties[i].size > sizeDiff){
@@ -98,35 +98,36 @@ function setResultCounter(type){
             partijIndex++;
         }
     }
-
-    for(var i = 0; i < subjects.length; i++){
-        for(var j = 0; j < partij.length; j++){
-            if(subjects[i].parties[j].position == matchCounter[i]){
-                partij[j].partijCounter++;
+    for(var q = 0; q < subjects.length; q++){
+        for(var i = 0; i < subjects[q].parties.length; i++){
+            if(subjects[q].parties[i].position == matchCounter[q]){
+                console.log(subjects[q].parties[i].name + " Vraag "+q);
+                for(var p = 0; p < partij.length; p++){
+                    if(partij[p].partijNaam == subjects[q].parties[i].name){
+                        partij[p].partijCounter++;
+                        console.log(partij[p].partijNaam + " +1");
+                    }
+                }
             }
         }
     }
+    
+    var gekozenPartij = [];
+    var gekozenPartijStandpunten = [];
+    var oldBestResult = 0;
     for(var i = 0; i < partij.length; i++){
-        if(i == 0){
-            gekozenPartij[i] = partij[i].partijNaam;
-            oldBestResult[i] = partij[i].partijCounter;
-        }else{
-            if(oldBestResult[i] < partij[i].partijCounter){
-                oldBestResult = [];
+        if(oldBestResult <= partij[i].partijCounter){
+            if(oldBestResult < partij[i].partijCounter){
                 gekozenPartij = [];
-                oldBestResult[0] = partij[i].partijCounter;
-                gekozenPartij[0] = partij[i].partijNaam;
-            }else if(oldBestResult[0] == partij[i].partijCounter){
-                oldBestResult.push(partij[i].partijCounter);
-                gekozenPartij.push(partij[i].partijNaam);
+                gekozenPartijStandpunten = [];
             }
+            oldBestResult = partij[i].partijCounter;
+            gekozenPartijStandpunten.push(partij[i].partijCounter);
+            gekozenPartij.push(partij[i].partijNaam);
         }
     }
-
-    for(var i = 0; i < oldBestResult.length; i++){
-        return_arr[0][i] = gekozenPartij[i];
-        return_arr[1][i] = oldBestResult[i];
-    }
+    return_arr[0] = gekozenPartij;
+    return_arr[1] = gekozenPartijStandpunten;
     return return_arr;
 }
 
@@ -168,7 +169,7 @@ function getQuestion(){
 }
 
 function getReverseQuestion(){
-    if(questionCount == 0){
+    if(questionCount != 0){
         var question = [];
         var questionCheck = subjects.length;
         questionCount--;
@@ -188,9 +189,7 @@ function getReverseQuestion(){
 }
 
 function loadResult(){
-    titleResult.innerHTML = "";
-    statementResult.innerHTML = "";
-    sizeResult.innerHTML = "";
+    resultaatPartijInfoContainer.innerHTML = "";
     var btnID = this.id;
     var typeLoad;
     if(btnID == "bigParties"){
@@ -208,9 +207,11 @@ function loadResult(){
     for(var j = 0; j < result[0].length; j++){
         for(var i = 0; i < parties.length; i++){
             if(parties[i].name == result[0][j]){
-                titleResult.innerHTML += " " + result[0][j] + " " + result[1][j] + "  |  ";
-                statementResult.innerHTML += parties[i].long + "  |  ";
-                sizeResult.innerHTML += parties[i].size + "  |  ";
+                resultaatPartijInfoContainer.innerHTML += "<div class='partij_info_result'>" +
+                                                        "<div id=\"title_result\" class=\"title_result\">"+result[0][j]+": "+parties[i].long+"</div>" +
+                                                        "<div id=\"statement_result\" class=\"statement_result\">Standpunten het zelfde: "+result[1][j]+"</div>" +
+                                                        "<div id=\"partij_size_result\" class=\"partij_size_result\">Zetels in tweede kamer: "+parties[i].size+"</div>" + 
+                                                    "</div>";
             }
         }
     }
@@ -247,7 +248,9 @@ function loadQuestions(){
 }
 
 function reverseQuestion(){
-    if(questionCount == 0){
+    console.log("Question count: " + questionCount);
+    if(questionCount != 0){
+        console.log("Question count: " + questionCount);
         startScreen.style.display = "none";
         questionScreen.style.display = "flex";
         var reverseQuestion = getReverseQuestion();

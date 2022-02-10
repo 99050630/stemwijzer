@@ -177,3 +177,15 @@ div#partie_name_container{
             background-color: #EEEE;
             color: #323232;
         }
+    div.partij_info_result{
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 10px 0;
+        border-bottom: 2px solid var(--lightgray);
+    }
+        div.resultaat_btn_container{
+            margin-top: 10px;
+        }
