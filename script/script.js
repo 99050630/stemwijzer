@@ -1,9 +1,11 @@
 //Declerations;
 var questionCount = 0;
+var extraCount = [];
 //Declerations: screens
 var startScreen = document.getElementById("startScreen");
 var questionScreen = document.getElementById("questionScreen");
 var resultScreen = document.getElementById("resultScreen");
+var extraScreen = document.getElementById("extraScreen");
 //Declerations: buttons
 var startBtn = document.getElementById("start_btn");
 var eensBtn = document.getElementById("eens_btn");
@@ -21,6 +23,9 @@ var statement = document.getElementById("statement");
 var vragenPartijen = document.getElementById("vragen_partijen");
 var partieNameContainer = document.getElementById("partie_name_container");
 var partieStatementContainer = document.getElementById("partie_statement_container");
+//Declerations: Extra pagina
+var extraBtn = document.getElementById("extra_btn");
+var extraContent = document.getElementById("extra_content");
 //Declerations: result pagina
 var titleResult = document.getElementById("title_result");
 var statementResult = document.getElementById("statement_result");
@@ -43,6 +48,7 @@ bigParties.addEventListener("click", loadResult);
 smallParties.addEventListener("click", loadResult);
 seculaireParties.addEventListener("click", loadResult);
 allParties.addEventListener("click", loadResult);
+extraBtn.addEventListener("click", loadResult);
 
 //Functions
 function setMatch(){
@@ -59,7 +65,6 @@ function setMatch(){
 }
 
 function setResultCounter(type){
-    console.log(matchCounter);
     var partij = [];
     var partijIndex = 0;
     var return_arr = [];
@@ -101,11 +106,16 @@ function setResultCounter(type){
     for(var q = 0; q < subjects.length; q++){
         for(var i = 0; i < subjects[q].parties.length; i++){
             if(subjects[q].parties[i].position == matchCounter[q]){
-                console.log(subjects[q].parties[i].name + " Vraag "+q);
                 for(var p = 0; p < partij.length; p++){
                     if(partij[p].partijNaam == subjects[q].parties[i].name){
                         partij[p].partijCounter++;
-                        console.log(partij[p].partijNaam + " +1");
+                        for(var e = 0; e < extraCount.length; e++){
+                            if(extraCount[e].questionNumber == q){
+                                if(extraCount[e].value == "checked"){
+                                    partij[p].partijCounter++;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -117,10 +127,10 @@ function setResultCounter(type){
     var oldBestResult = 0;
     for(var i = 0; i < partij.length; i++){
         if(oldBestResult <= partij[i].partijCounter){
-            if(oldBestResult < partij[i].partijCounter){
-                gekozenPartij = [];
-                gekozenPartijStandpunten = [];
-            }
+            // if(oldBestResult < partij[i].partijCounter){
+            //     gekozenPartij = [];
+            //     gekozenPartijStandpunten = [];
+            // }
             oldBestResult = partij[i].partijCounter;
             gekozenPartijStandpunten.push(partij[i].partijCounter);
             gekozenPartij.push(partij[i].partijNaam);
@@ -188,7 +198,26 @@ function getReverseQuestion(){
     }
 }
 
+function setExtraResultArr(){
+    var checkBoxes = document.querySelectorAll("input[type=checkbox]");
+    for(var i = 0; i < checkBoxes.length; i++){
+        if(checkBoxes[i].checked){
+            extraCount[i] = {
+                questionNumber: i,
+                value: "checked"
+            }
+        }else{
+            extraCount[i] = {
+                questionNumber: i,
+                value: ""
+            }
+        }
+    }
+}
+
 function loadResult(){
+    setExtraResultArr();
+    extraScreen.style.display = "none";
     resultaatPartijInfoContainer.innerHTML = "";
     var btnID = this.id;
     var typeLoad;
@@ -217,6 +246,18 @@ function loadResult(){
     }
 }
 
+function loadExtra(){
+    questionScreen.style.display = "none";
+    // resultaatPartijInfoContainer.innerHTML = "";
+    for(var i = 0; i < subjects.length; i++){
+        extraContent.innerHTML += "<div class='extra_inner'>" +
+                                  " <input type='checkbox' id='extra_"+i+"'>" + 
+                                  " <p>"+subjects[i].title+"</p>" + 
+                                  "</div>";
+    }
+    extraScreen.style.display = "flex";
+}
+
 function oldAnswerCheck(){
     // matchCounterCounter--;
     if(matchCounter[matchCounterCounter] != ""){
@@ -243,14 +284,13 @@ function loadQuestions(){
         resetButtons();
         oldAnswerCheck();
     }else{
-        loadResult();
+        loadExtra();
+        // loadResult();
     }
 }
 
 function reverseQuestion(){
-    console.log("Question count: " + questionCount);
     if(questionCount != 0){
-        console.log("Question count: " + questionCount);
         startScreen.style.display = "none";
         questionScreen.style.display = "flex";
         var reverseQuestion = getReverseQuestion();
@@ -260,7 +300,8 @@ function reverseQuestion(){
             resetButtons();
             oldAnswerCheck();
         }else{
-            loadResult();
+            loadExtra();
+            // loadResult();
         }
     }
 }
